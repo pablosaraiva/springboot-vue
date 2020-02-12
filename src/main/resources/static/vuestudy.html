@@ -1,0 +1,118 @@
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml" lang="pt-BR">
+<head>
+	<title>pablosaraiva.com</title>
+	<link rel="stylesheet" href="styles.css">
+	<meta charset="UTF-8">
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<h1>pablosaraiva.com</h1>
+
+<div id="app">
+	{{ message }}
+</div>
+
+<div id="app-2">
+  <span v-bind:title="message">
+    Hover your mouse over me for a few seconds
+    to see my dynamically bound title!
+  </span>
+</div>
+
+
+<div id="app-3">
+	<span v-if="seen">Now you see me</span>
+</div>
+
+<div id="app-4">
+	<ol>
+		<li v-for="todo in todos">
+			{{ todo.text }}
+		</li>
+	</ol>
+</div>
+
+<div id="app-5">
+	<p>{{ message }}</p>
+	<button v-on:click="reverseMessage">Reverse Message</button>
+</div>
+
+<div id="app-6">
+	<p>{{ message }}</p>
+	<input v-model="message">
+</div>
+
+<div id="app-bitcoin">
+	{{ info }}
+</div>
+
+<script>
+	var app = new Vue({
+		el: '#app',
+		data: {
+			message: 'Hello Vue!'
+		}
+	});
+
+	var app2 = new Vue({
+		el: '#app-2',
+		data: {
+			message: 'You loaded this page on ' + new Date().toLocaleString()
+		}
+	});
+
+	var app3 = new Vue({
+		el: '#app-3',
+		data: {
+			seen: true
+		}
+	});
+
+	var app4 = new Vue({
+		el: '#app-4',
+		data: {
+			todos: [
+				{ text: 'Learn JavaScript' },
+				{ text: 'Learn Vue' },
+				{ text: 'Build something awesome' }
+			]
+		}
+	});
+
+	var app5 = new Vue({
+		el: '#app-5',
+		data: {
+			message: 'Vue é Tetra!'
+		},
+		methods: {
+			reverseMessage: function () {
+				this.message = this.message.split('').reverse().join('')
+			}
+		}
+	});
+
+	var app6 = new Vue({
+		el: '#app-6',
+		data: {
+			message: 'Hello Vue!'
+		}
+	});
+
+	new Vue({
+		el: '#app-bitcoin',
+		data () {
+			return {
+				info: null
+			}
+		},
+		mounted () {
+			axios
+				.get('https://api.coindesk.com/v1/bpi/currentprice.json')
+				.then(response => (this.info = response))
+		}
+	});
+
+</script>
+</body>
+</html>
