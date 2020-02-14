@@ -19,4 +19,10 @@ public class DebugController
 		return new RedirectView("/mdm/index.html");
 	}
 
+	@GetMapping("/cats")
+	public RedirectView needToFixTheRouteViaVuePressLater()
+	{
+		return new RedirectView("/cats/index.html");
+	}
+
 }
