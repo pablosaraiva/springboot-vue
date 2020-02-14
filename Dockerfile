@@ -4,4 +4,4 @@ VOLUME /tmp
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
 COPY target/classes/static/ static
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-Xms350m","-Xmx350m","-jar","/app.jar"]

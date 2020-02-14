@@ -4,5 +4,17 @@ services:
     image: pablosaraiva/web:dev
     ports:
       - "8080"
+  nginx:
+    image: nginx
+    depends_on:
+      - web
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    environment:
+      - NGINX_HOST=pablosaraiva.com
+      - NGINX_PORT=80
+
   
 
