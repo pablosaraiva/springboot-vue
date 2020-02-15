@@ -7,11 +7,8 @@ module.exports = {
 		nav: [
 			{ text: 'Home', link: '/' },
 			{ text: 'Blog', link: '/blog/' },
+			{ text: 'Music', link: '/music/' },
 			{ text: 'About', link: '/about/' }
-		],
-		sidebar: [
-			'/',
-			'/mdm/'
 		]
 	}
 }

@@ -8,7 +8,7 @@ public class VuePressController {
 
   private static final String INDEX_HTML = "index.html";
 
-  @RequestMapping({"/mdm", "/about", "/todo", "/blog"})
+  @RequestMapping({"/mdm", "/about", "/todo", "/blog", "/music"})
   public String routeFrontendUrls() {
     return INDEX_HTML;
   }

@@ -13,9 +13,9 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build . -t pablosaraiva/web:master
+            docker build . -t pablosaraiva/web:latest
             echo "$DOCKERHUB_PASS" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
-            docker push pablosaraiva/web:master
+            docker push pablosaraiva/web:latest
 
 workflows:
   build-master:

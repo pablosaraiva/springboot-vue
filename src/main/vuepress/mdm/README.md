@@ -2,4 +2,4 @@
 
 Work in progress
 
-![MDM](./mdm.png)
+![MDM](../images/mdm.png)
