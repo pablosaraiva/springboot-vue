@@ -12,9 +12,3 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"
-    environment:
-      - NGINX_HOST=pablosaraiva.com
-      - NGINX_PORT=80
-
-  
-

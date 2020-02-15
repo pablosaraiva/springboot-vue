@@ -1,0 +1,10 @@
+version: "3.2"
+services:
+  nginx:
+    volumes:
+      - "./nginx-prod.conf:/etc/nginx/nginx.conf"
+      - "./${ACME_CHALLENGE_FILENAME}:/etc/acme-challenge/.well-known/acme-challenge/${ACME_CHALLENGE_FILENAME}"
+      - "/etc/letsencrypt/live/pablosaraiva.com/fullchain.pem:/etc/ssl/certificate.pem"
+      - "/etc/letsencrypt/live/pablosaraiva.com/privkey.pem:/etc/ssl/key.pem"
+    ports:
+      - "443:443"
