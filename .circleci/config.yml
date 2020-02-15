@@ -3,7 +3,27 @@ version: 2.1
 orbs:
   maven: circleci/maven@0.0.12
 
+jobs:
+  build:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            docker build . -t pablosaraiva/web:master
+            echo "$DOCKERHUB_PASS" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+            docker push pablosaraiva/web:master
+
 workflows:
-  maven_test:
+  build-master:
     jobs:
       - maven/test # checkout, build, test, and upload test results
+      - build:
+          requires:
+            - maven/test
+          filters:
+            branches:
+              only: master
