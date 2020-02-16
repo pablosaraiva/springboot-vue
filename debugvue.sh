@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd src/main/vuepress
-vuepress dev
+vuepress dev docs
 cd ../../..

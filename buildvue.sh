@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd src/main/vuepress
-vuepress build
-rm -rf src/main/resources/static/assets
-cp -R ./.vuepress/dist/* ../resources/static/
+vuepress build docs
+rm -rf ../resources/static/assets
+cp -R ./docs/.vuepress/dist/* ../resources/static/
 cd ../../..
