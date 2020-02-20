@@ -1,6 +1,16 @@
+FROM node:current-alpine3.11
+COPY src/main/vuepress /tmp/
+WORKDIR /tmp/
+RUN npm install -g vuepress && \
+    npm install -g @vuepress/plugin-blog && \
+    npm install -D vuepress && \
+    npm install -D @vuepress/plugin-blog && \
+    vuepress build docs
+
 FROM maven:3.5.2-jdk-8-alpine AS MAVEN_TOOL_CHAIN
 COPY pom.xml /tmp/
 COPY src /tmp/src/
+COPY --from=0 /tmp/docs/.vuepress/dist /tmp/src/main/resources/static/
 WORKDIR /tmp/
 RUN mvn install
 
