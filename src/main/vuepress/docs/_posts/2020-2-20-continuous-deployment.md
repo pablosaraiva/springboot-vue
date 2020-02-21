@@ -17,7 +17,7 @@ branch will deploy to the staging environment.
 
 The staging environment is a copy of my web application that runs at a different port.
 
-https://pablosaraiva.com:8080
+[https://pablosaraiva.com:8080](https://pablosaraiva.com:8080)
 
 Every change on master generates a new docker image that gets deployed to this environment 
 automatically.
