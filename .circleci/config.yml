@@ -4,7 +4,7 @@ orbs:
   maven: circleci/maven@0.0.12
 
 jobs:
-  build:
+  build-staging:
     docker:
       - image: circleci/buildpack-deps:stretch
     steps:
@@ -17,13 +17,37 @@ jobs:
             echo "$DOCKERHUB_PASS" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
             docker push pablosaraiva/web:latest
 
+  build-prod:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            docker build . -t pablosaraiva/web:stable
+            echo "$DOCKERHUB_PASS" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+            docker push pablosaraiva/web:stable
+
+
 workflows:
   build-master:
     jobs:
-      - maven/test # checkout, build, test, and upload test results
-      - build:
+      - maven/test
+      - build-prod:
           requires:
             - maven/test
           filters:
             branches:
               only: master
+
+  build-develop:
+    jobs:
+      - maven/test
+      - build-staging:
+          requires:
+            - maven/test
+          filters:
+            branches:
+              only: develop
