@@ -34,7 +34,10 @@ jobs:
 workflows:
   build-master:
     jobs:
-      - maven/test
+      - maven/test:
+          filters:
+            branches:
+              only: master
       - build-prod:
           requires:
             - maven/test
@@ -44,7 +47,10 @@ workflows:
 
   build-develop:
     jobs:
-      - maven/test
+      - maven/test:
+          filters:
+            branches:
+              only: develop
       - build-staging:
           requires:
             - maven/test
