@@ -1,1 +1,5 @@
-/node_modules
+.git
+.idea
+**/node_modules
+**/target
+src/main/vuepress/docs/.vuepress/dist
