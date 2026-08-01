@@ -12,13 +12,15 @@ COPY pom.xml /tmp/
 COPY src /tmp/src/
 COPY --from=vuepress-build /tmp/docs/.vuepress/dist /tmp/src/main/resources/static/
 WORKDIR /tmp/
-RUN mvn -B install
+RUN mvn -B -DskipTests package
 
-# Runtime image (JRE only, maintained base)
-FROM eclipse-temurin:17-jre-alpine
+# Runtime image (JRE only, amd64, non-root)
+FROM --platform=linux/amd64 eclipse-temurin:17-jre-alpine
 EXPOSE 8080
 VOLUME /tmp
+RUN addgroup -S app && adduser -S app -G app -h /app
 ARG JAR_FILE=/tmp/target/*.jar
-COPY --from=maven-build ${JAR_FILE} app.jar
-COPY --from=maven-build /tmp/target/classes/static/ static
-ENTRYPOINT ["java","-Xms350m","-Xmx350m","-jar","/app.jar"]
+COPY --from=maven-build ${JAR_FILE} /app/app.jar
+RUN chown -R app:app /app /tmp
+USER app
+ENTRYPOINT ["java","-Xms350m","-Xmx350m","-jar","/app/app.jar"]

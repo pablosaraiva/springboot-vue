@@ -1,8 +1,9 @@
-version: "3.2"
 services:
   web:
     image: pablosaraiva/web:stable
   nginx:
+    depends_on:
+      - web
     volumes:
       - "./nginx-prod.conf:/etc/nginx/nginx.conf"
       - "./${ACME_CHALLENGE_FILENAME}:/etc/acme-challenge/.well-known/acme-challenge/${ACME_CHALLENGE_FILENAME}"

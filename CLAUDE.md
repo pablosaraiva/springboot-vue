@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-The source for **pablosaraiva.com**, a personal site. A Spring Boot 3.3 (Java 17) backend serves a VuePress 1.x-generated static frontend. The frontend is a static blog (built with `@vuepress/plugin-blog`) whose output is bundled *into* the Spring Boot jar as static resources and served by the same process, with nginx as a reverse proxy in front in dev/prod.
+The source for **pablosaraiva.com**, a personal site. A Spring Boot 3.5 (Java 17) backend serves a VuePress 1.x-generated static frontend. The frontend is a static blog (built with `@vuepress/plugin-blog`) whose output is bundled *into* the Spring Boot jar as static resources and served by the same process, with nginx as a reverse proxy in front in dev/prod.
 
 ## Build & run
 
 The frontend (VuePress) and backend (Maven) are separate toolchains that meet in the Docker build.
 
 ```bash
-# Backend only — compile, run tests, package jar (Java 17 / Spring Boot 3.3.x)
+# Backend only — compile, run tests, package jar (Java 17 / Spring Boot 3.5.x)
 ./mvnw clean install
 ./mvnw spring-boot:run                 # dev server on :8080 (serves whatever is currently in src/main/resources/static)
 
@@ -38,8 +38,8 @@ This means **edits to Markdown go in `src/main/vuepress/docs/`**, never directly
 
 ### Backend (Spring Boot)
 - `WebApplication` — `@SpringBootApplication` entry point.
-- `WebConfig` — re-enables trailing-slash path matching (`/about` matches `/about/`). Spring Framework 6 / Spring Boot 3 disabled this by default (it was on in Spring Boot 2); VuePress's nav links use trailing slashes, so without this the frontend routes 404. Do not remove it when bumping Spring Boot.
-- `VuePressController` — maps the VuePress frontend routes (`/mdm`, `/about`, `/todo`, `/blog`, `/music`, `/posts`, `/posts/page/*`, and the blog's dated post permalink pattern `/2*/*/*/*`) to `index.html`. This is the SPA-style fallback that lets VuePress's client router own deep links while Spring Boot still handles them. **When adding a new top-level frontend route, add it to the `@RequestMapping` list here** or it will 404.
+- `VuePressController` — maps the VuePress frontend routes to `index.html` so deep links resolve server-side. **Each route is declared in both slash and no-slash forms** (`/about` and `/about/`, plus `/posts/page/*` and `/posts/page/*/`, and `/2*/*/*/*` and `/2*/*/*/*/` for dated post permalinks). Spring Framework 6 / Spring Boot 3 disabled trailing-slash matching by default (it was on in Spring Boot 2); VuePress's nav and sitemap use trailing-slash URLs, so both forms are listed explicitly rather than relying on `setUseTrailingSlashMatch` (deprecated in Spring 6, removed in Spring 7). **When adding a new top-level frontend route, add both slash forms to the `@GetMapping` list here** or it will 404. Only GET/HEAD are served. `RoutingTests` guards this behavior.
+- `RedirectController` — server-side redirect for `/cats` (external link).
 - `RedirectController` — server-side redirect for `/cats` (external link).
 
 ### Nginx layer
@@ -55,6 +55,6 @@ nginx `try_files $uri $uri/ @backend` serves static assets directly and falls ba
 
 ## Key gotchas
 
-- Java 17 is pinned in `pom.xml` (`java.version`); the Dockerfile uses `maven:3.9-eclipse-temurin-17` (build) and `eclipse-temurin:17-jre-alpine` (runtime, amd64-only — build with `--platform=linux/amd64` on Apple Silicon). Spring Boot 3 requires Java 17+. Keep these coordinated.
+- Java 17 is pinned in `pom.xml` (`java.version`); the Dockerfile build stage uses `maven:3.9-eclipse-temurin-17` and the runtime stage is `FROM --platform=linux/amd64 eclipse-temurin:17-jre-alpine` (amd64-only, pinned explicitly so builds are deterministic on Apple Silicon — no need to pass `--platform` yourself) and runs as a non-root `app` user. Spring Boot 3 requires Java 17+. Keep these coordinated when bumping.
 - VuePress 1.x (`^1.9.10`) and `@vuepress/plugin-blog` are installed from `package-lock.json` via `npm ci` in the Docker build (no global installs). Local frontend deps live in `src/main/vuepress/` (`npm install` run there for local dev). VuePress 1.x is in maintenance; many transitive npm vulns remain that only a VuePress 2 migration would clear.
 - `target/`, `.idea/`, the VuePress `dist/` output, and `node_modules/` are gitignored — don't commit generated artifacts.
